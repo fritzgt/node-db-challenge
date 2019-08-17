@@ -1,6 +1,7 @@
 exports.up = function(knex) {
   return (
     knex.schema
+      //`project` can have multiple `tasks`
       .createTable('project', tbl => {
         tbl.increments();
         tbl.string('name').notNullable();
@@ -10,6 +11,7 @@ exports.up = function(knex) {
           .notNullable()
           .defaultTo(false);
       })
+      //`task` belongs to only one `project`
       .createTable('task', tbl => {
         tbl.increments();
         tbl.text('description').notNullable();
@@ -60,4 +62,11 @@ exports.up = function(knex) {
   );
 };
 
-exports.down = function(knex) {};
+//dropping tables in reverse order
+exports.down = function(knex) {
+  return knex.schema
+    .dropTableIfExists('project_resource')
+    .dropTableIfExists('resource')
+    .dropTableIfExists('task')
+    .dropTableIfExists('project');
+};
